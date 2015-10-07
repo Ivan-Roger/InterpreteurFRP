@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
   ifstream fichier(nomFich.c_str());
   try {
     Interpreteur interpreteur(fichier);
+    cout << endl << "================ Analyse Syntaxe" << endl;
     interpreteur.analyse();
     // Si pas d'exception levée, l'analyse syntaxique a réussi
     cout << endl << "================ Syntaxe Correcte" << endl;

@@ -2,9 +2,9 @@
 # Les lignes de commentaires commencent par #
 procedure principale()
   i = 12+3;
+  tantque;
   si (i>14)
     j=1;
   finsi
-  ecrire(i);
 finproc
 # Commentaire Final
