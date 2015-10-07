@@ -26,15 +26,20 @@ private:
     Noeud*         m_arbre;    // L'arbre abstrait
 
     // Implémentation de la grammaire
-    Noeud*  programme();   //   <programme> ::= procedure principale() <seqInst> finproc FIN_FICHIER
-    Noeud*  seqInst();	   //     <seqInst> ::= <inst> { <inst> }
-    Noeud*  inst();	       //        <inst> ::= <affectation> ; | <instSi>
-    Noeud*  affectation(); // <affectation> ::= <variable> = <expression> 
-    Noeud*  expression();  //  <expression> ::= <facteur> { <opBinaire> <facteur> }
-    Noeud*  facteur();     //     <facteur> ::= <entier>  |  <variable>  |  - <facteur>  | non <facteur> | ( <expression> )
-                           //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
-    Noeud*  instSi();      //      <instSi> ::= si ( <expression> ) <seqInst> finsi
-
+    Noeud*  programme();        //   <programme> ::= procedure principale() <seqInst> finproc FIN_FICHIER
+    Noeud*  seqInst();          //     <seqInst> ::= <inst> { <inst> }
+    Noeud*  inst();	        //        <inst> ::= <affectation> ; | <instSi>
+    Noeud*  affectation();      // <affectation> ::= <variable> = <expression> 
+    Noeud*  expression();       //  <expression> ::= <facteur> { <opBinaire> <facteur> }
+    Noeud*  facteur();          //     <facteur> ::= <entier>  |  <variable>  |  - <facteur>  | non <facteur> | ( <expression> )
+    //Noeud*  opBinaire();        //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
+    Noeud*  instSi();           //      <instSi> ::= si ( <expression> ) <seqInst> finsi
+    Noeud*  instTantQue();      // <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque
+    Noeud*  instRepeter();      // <instRepeter> ::= repeter <seqInst> jusqua( <expression> )
+    Noeud*  instPour();         //    <instPour> ::= pour ( [ <affectation> ] ; <expression> ; [ <affectation> ] ) <seqInst> finpour
+    Noeud*  instEcrire();       //  <instEcrire> ::= ecrire ( <expression> | <chaine> {, <expression> | <chaine> } )
+    Noeud*  instLire();         //    <instLire> ::= lire ( <variable> { , <variable> } )
+    
     // outils pour simplifier l'analyse syntaxique
     void tester (const string & symboleAttendu) const throw (SyntaxeException);   // Si symbole courant != symboleAttendu, on lève une exception
     void testerEtAvancer(const string & symboleAttendu) throw (SyntaxeException); // Si symbole courant != symboleAttendu, on lève une exception, sinon on avance
