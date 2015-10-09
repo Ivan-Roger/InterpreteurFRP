@@ -79,3 +79,81 @@ int NoeudInstSi::executer() {
   if (m_condition->executer()) m_sequence->executer();
   return 0; // La valeur renvoyée ne représente rien !
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstTantQue
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstTantQue::NoeudInstTantQue(Noeud* condition, Noeud* sequence)
+: m_condition(condition), m_sequence(sequence) {
+}
+
+int NoeudInstTantQue::executer() {
+  while (m_condition->executer()) {
+    m_sequence->executer();
+  }
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstRepeter
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstRepeter::NoeudInstRepeter(Noeud* condition, Noeud* sequence)
+: m_condition(condition), m_sequence(sequence) {
+}
+
+int NoeudInstRepeter::executer() {
+  do {
+    m_sequence->executer();
+  } while (m_condition->executer());
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstPour
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstPour::NoeudInstPour(Noeud* condition, Noeud* sequence, Noeud* init, Noeud* inc)
+: m_condition(condition), m_sequence(sequence), m_init(init), m_inc(inc) {
+}
+
+int NoeudInstPour::executer() {
+  if (m_init!=nullptr) m_init->executer();
+  while (m_condition->executer()) {
+      m_sequence->executer();
+      if (m_inc!=nullptr) m_inc->executer();
+  }
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstEcrire
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstEcrire::NoeudInstEcrire() {
+}
+
+int NoeudInstEcrire::executer() {
+  for (int i=0; i<m_expressions.size(); i++) {
+      cout << m_expressions[i]->executer();
+  }
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstEcrire::ajoute(Noeud* expression) {
+  m_expressions->push_back(expression);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstLire
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstLire::NoeudInstLire(Noeud* var)
+: m_var(var) {
+}
+
+int NoeudInstLire::executer() {
+  cin >> m_var;
+  return 0; // La valeur renvoyée ne représente rien !
+}

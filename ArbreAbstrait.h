@@ -81,4 +81,81 @@ class NoeudInstSi : public Noeud {
     Noeud*  m_sequence;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstTantQue : public Noeud {
+// Classe pour représenter un noeud "instruction tantque"
+//  et ses 2 fils : la condition et la séquence d'instruction associée
+  public:
+    NoeudInstTantQue(Noeud* condition, Noeud* sequence);
+     // Construit une "instruction tantque" avec sa condition et sa séquence d'instruction
+   ~NoeudInstTantQue() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction tantque : execute les insruction tant que la condition est verifiée
+
+  private:
+    Noeud*  m_condition;
+    Noeud*  m_sequence;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstRepeter : public Noeud {
+// Classe pour représenter un noeud "instruction repeter"
+//  et ses 2 fils : la condition et la séquence d'instruction associée
+  public:
+    NoeudInstRepeter(Noeud* condition, Noeud* sequence);
+     // Construit une "instruction repeter" avec sa condition et sa séquence d'instruction
+   ~NoeudInstRepeter() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction repeter : repete les instruction (au moins une fois)
+                    // jusqu'a que la condition ne soit plus verifiée
+
+  private:
+    Noeud*  m_condition;
+    Noeud*  m_sequence;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstPour : public Noeud {
+// Classe pour représenter un noeud "instruction pour"
+//  et ses 4 fils : la condition et la séquence d'instruction associée et les eventuels initialisation et incrementation
+  public:
+    NoeudInstPour(Noeud* condition, Noeud* sequence, Noeud* init=nullptr, Noeud* inc= nullptr);
+     // Construit une "instruction pour" avec sa condition et sa séquence d'instruction et ses eventuels initialisation et incrementation
+   ~NoeudInstPour() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction pour : boucle avec variable auto incrémenté
+
+  private:
+    Noeud*  m_init;
+    Noeud*  m_condition;
+    Noeud*  m_inc;
+    Noeud*  m_sequence;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstEcrire : public Noeud {
+// Classe pour représenter un noeud "instruction ecrire"
+//  qui a autant de fils que d'éléments a afficher
+  public:
+    NoeudInstEcrire();
+     // Construit une "instruction ecrire"
+   ~NoeudInstEcrire() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction ecrire : affiche les resultat des expressions et les chaines
+    void ajoute(Noeud* expression);  // Ajoute une expression
+    
+  private:
+    std::vector<Noeud*>  m_expressions;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstLire : public Noeud {
+// Classe pour représenter un noeud "instruction lire"
+//  et son fils : la variable a lire
+  public:
+    NoeudInstLire(Noeud* var);
+     // Construit une "instruction lire" avec sa variable a lire
+   ~NoeudInstLire() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction lire : demande a l'utilisateur la valeur de la variable;
+
+  private:
+    Noeud*  m_var;
+};
+
 #endif /* ARBREABSTRAIT_H */
