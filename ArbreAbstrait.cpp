@@ -136,13 +136,13 @@ NoeudInstEcrire::NoeudInstEcrire() {
 
 int NoeudInstEcrire::executer() {
   for (int i=0; i<m_expressions.size(); i++) {
-      cout << m_expressions[i]->executer();
+      cout << m_expressions[i];
   }
   return 0; // La valeur renvoyée ne représente rien !
 }
 
 void NoeudInstEcrire::ajoute(Noeud* expression) {
-  m_expressions->push_back(expression);
+  m_expressions.push_back(expression);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +154,8 @@ NoeudInstLire::NoeudInstLire(Noeud* var)
 }
 
 int NoeudInstLire::executer() {
-  cin >> m_var;
+    int tmp;
+    cin >> tmp;
+  ((SymboleValue*)m_var)->setValeur(tmp);
   return 0; // La valeur renvoyée ne représente rien !
 }

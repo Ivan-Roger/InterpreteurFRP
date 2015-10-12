@@ -1,6 +1,8 @@
 #include "Interpreteur.h"
 #include <stdlib.h>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 using namespace std;
 
 Interpreteur::Interpreteur(ifstream & fichier) : m_lecteur(fichier), m_table(), m_arbre(nullptr) {
@@ -14,8 +16,9 @@ void Interpreteur::tester(const string & symboleAttendu) const throw (SyntaxeExc
     // Teste si le symbole courant est égal au symboleAttendu... Si non, lève une exception
     static char messageWhat[256];
     if (m_lecteur.getSymbole() != symboleAttendu) {
+        cout << endl;
         sprintf(messageWhat,
-                "Ligne %d, Colonne %d - Erreur de syntaxe - Symbole attendu : %s - Symbole trouvé : %s",
+                "Ligne %d, Colonne %d - Erreur de syntaxe - Symbole attendu : '%s' - Symbole trouvé : '%s'",
                 m_lecteur.getLigne(), m_lecteur.getColonne(),
                 symboleAttendu.c_str(), m_lecteur.getSymbole().getChaine().c_str());
         throw SyntaxeException(messageWhat);
@@ -31,9 +34,10 @@ void Interpreteur::testerEtAvancer(const string & symboleAttendu) throw (Syntaxe
 void Interpreteur::erreur(const string & message) const throw (SyntaxeException) {
     // Lève une exception contenant le message et le symbole courant trouvé
     // Utilisé lorsqu'il y a plusieurs symboles attendus possibles...
+    cout << endl;
     static char messageWhat[256];
     sprintf(messageWhat,
-            "Ligne %d, Colonne %d - Erreur de syntaxe - %s - Symbole trouvé : %s",
+            "Ligne %d, Colonne %d - Erreur de syntaxe - %s - Symbole trouvé : '%s'",
             m_lecteur.getLigne(), m_lecteur.getColonne(), message.c_str(), m_lecteur.getSymbole().getChaine().c_str());
     throw SyntaxeException(messageWhat);
 }
@@ -153,78 +157,82 @@ Noeud* Interpreteur::instTantQue() {
     // <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque
     testerEtAvancer("tantque");
     testerEtAvancer("(");
-    expression(); // recup resultat
+    Noeud* exp = expression(); // recup resultat
     testerEtAvancer(")");
-    seqInst(); // recup resultat
+    Noeud* seq = seqInst(); // recup resultat
     testerEtAvancer("fintantque");
-    return nullptr;
+    Noeud* res = new NoeudInstTantQue(exp,seq);
+    return res;
 }
 
 Noeud* Interpreteur::instRepeter() {
     // <instRepeter> ::= repeter <seqInst> jusqua( <expression> )
     testerEtAvancer("repeter");
-    seqInst(); // recup resultat
+    Noeud* seq = seqInst(); // recup resultat
     testerEtAvancer("jusqua");
     testerEtAvancer("(");
-    expression(); // recup resultat
+    Noeud* exp = expression(); // recup resultat
     testerEtAvancer(")");
-    return nullptr;
+    Noeud* res = new NoeudInstRepeter(exp,seq);
+    return res;
 }
 
 Noeud* Interpreteur::instPour() {
     //    <instPour> ::= pour ( [ <affectation> ] ; <expression> ; [ <affectation> ] ) <seqInst> finpour
     testerEtAvancer("pour");
     testerEtAvancer("(");
+    Noeud* init = nullptr;
     if (m_lecteur.getSymbole()=="<VARIABLE>") {
-        affectation(); // recup resultat
+        init = affectation(); // recup resultat
     }
     testerEtAvancer(";");
-    expression(); // recup resultat
+    Noeud* exp = expression(); // recup resultat
     testerEtAvancer(";");
+    Noeud* inc = nullptr;
     if (m_lecteur.getSymbole()=="<VARIABLE>") {
-        affectation(); // recup resultat
+        inc = affectation(); // recup resultat
     }
     testerEtAvancer(")");
-    seqInst(); // recup resultat
+    Noeud* seq = seqInst(); // recup resultat
     testerEtAvancer("finpour");
-    return nullptr;
+    Noeud* res = new NoeudInstPour(exp,seq,init,inc);
+    return res;
 }
 
 Noeud* Interpreteur::instEcrire() {
     //  <instEcrire> ::= ecrire ( <expression> | <chaine> {, <expression> | <chaine> } )
+    Noeud* res = new NoeudInstEcrire();
     testerEtAvancer("ecrire");
-    testerEtAvancer("(");
-    if (m_lecteur.getSymbole() == "<VARIABLE>") {
-        expression(); // recup resultat
-    } else if (m_lecteur.getSymbole() == "<CHAINE>") {
-        //créer le Noeud
-    } else {
-        erreur("Instruction incorrecte");
-    }
-    m_lecteur.avancer();
-    while(m_lecteur.getSymbole() == ",") {
-        testerEtAvancer(",");
-        if (m_lecteur.getSymbole() == "<VARIABLE>") {
-            expression(); // recup resultat
-        } else if (m_lecteur.getSymbole() == "<CHAINE>") {
-            //créer le Noeud
-        } else {
-            erreur("Instruction incorrecte");
-        }
+    tester("(");
+    int i=0;
+    do {
         m_lecteur.avancer();
-    }
+        if (m_lecteur.getSymbole() == "<VARIABLE>") {
+            res->ajoute(expression());
+        } else if (m_lecteur.getSymbole() == "<CHAINE>") {
+            res->ajoute(m_table.chercheAjoute(m_lecteur.getSymbole()));
+            m_lecteur.avancer();
+        } else {
+            stringstream ss;
+            ss << "Paramètre " << i+1 << " incorrect";
+            erreur(ss.str().c_str());
+        }
+        i++;
+    } while(m_lecteur.getSymbole() == ",");
     testerEtAvancer(")");
     testerEtAvancer(";");
-    return nullptr;
+    return res;
 }
 
 Noeud* Interpreteur::instLire() {
     //    <instLire> ::= lire ( <variable> { , <variable> } )
     testerEtAvancer("lire");
     testerEtAvancer("(");
-    testerEtAvancer("<VARIABLE>");
+    tester("<VARIABLE>");
+    Noeud* res = new NoeudInstLire(m_table.chercheAjoute(m_lecteur.getSymbole()));
+    m_lecteur.avancer();
     testerEtAvancer(")");
     testerEtAvancer(";");
-    return nullptr;
+    return res;
 }
 

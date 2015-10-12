@@ -1,6 +1,8 @@
 # Fichier de test
 # Les lignes de commentaires commencent par #
 procedure principale()
+  a = 5;
+  ecrire("Saisir a : ");
   lire(a);
   i = 12+3;
   tantque (i>7)
@@ -9,13 +11,13 @@ procedure principale()
   repeter
     i=i+1;
   jusqua (i>9)
-  si (i>14)
+  si (i>5)
     j=1;
   finsi
   pour (x=0;x<10;x=x+1)
-    y=x*2;
-    #ecrire(y);
+    y = x*2;
+    ecrire("y=",y);
   finpour
-  ecrire("bonjour");
+  ecrire("Bonjour, ",a);
 finproc
 # Commentaire Final
