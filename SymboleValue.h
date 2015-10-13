@@ -16,7 +16,6 @@ public:
     int  executer();         // exécute le SymboleValue (revoie sa valeur !)
     
     inline void setValeur(int valeur)    { this->m_valeur=valeur; m_defini=true;  } // accesseur
-    inline void setValeur(string valeur) { this->m_chaine=valeur; m_defini=true;  } // accesseur
     inline bool estDefini()              { return m_defini;                       } // accesseur
 
     friend ostream & operator << (ostream & cout, const SymboleValue & symbole); // affiche un symbole value sur cout
@@ -24,7 +23,6 @@ public:
 private:
     bool m_defini;	// indique si la valeur du symbole est définie
     int  m_valeur;	// valeur du symbole si elle est définie, zéro sinon
-    string  m_chaine;	// valeur du symbole si elle est définie, zéro sinon
 };
 
 #endif /* SYMBOLEVALUE_H */

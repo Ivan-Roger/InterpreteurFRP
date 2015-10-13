@@ -1,8 +1,17 @@
 #include <stdlib.h>
+#include <typeinfo>
 #include "ArbreAbstrait.h"
 #include "Symbole.h"
 #include "SymboleValue.h"
 #include "Exceptions.h"
+
+bool replace(std::string& str, const std::string& from, const std::string& to) {
+    size_t start_pos = str.find(from);
+    if(start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudSeqInst
@@ -136,7 +145,19 @@ NoeudInstEcrire::NoeudInstEcrire() {
 
 int NoeudInstEcrire::executer() {
   for (int i=0; i<m_expressions.size(); i++) {
-      cout << m_expressions[i];
+      Noeud* p = m_expressions[i];
+      if (typeid(*p)==typeid(SymboleValue)) {
+          SymboleValue* r = ((SymboleValue*)p);
+          if (*r=="<CHAINE>") {
+            string str = r->getChaine().substr(1,r->getChaine().size()-2);
+            replace(str,string("\\n"),string("\n"));
+            replace(str,string("\\r"),string("\r"));
+            replace(str,string("\\t"),string("\t"));
+            cout << str;
+          } else cout << r->executer();
+      } else {
+          cout << p->executer();
+      }
   }
   return 0; // La valeur renvoyée ne représente rien !
 }
