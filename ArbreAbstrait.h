@@ -71,14 +71,17 @@ class NoeudInstSi : public Noeud {
 // Classe pour représenter un noeud "instruction si"
 //  et ses 2 fils : la condition du si et la séquence d'instruction associée
   public:
-    NoeudInstSi(Noeud* condition, Noeud* sequence);
-     // Construit une "instruction si" avec sa condition et sa séquence d'instruction
+    NoeudInstSi(Noeud* condition, Noeud* seqIf, std::vector<std::pair<Noeud*,Noeud*>>* vpElseIf = nullptr, Noeud* seqElse = nullptr);
+     // Construit une "instruction si" avec sa condition et sa séquence d'instruction et ses eventuels condition et sequence d'instruction des ses sinonsi
+     // ansi que l'eventuel condition et sequence d'instruction du sinon
    ~NoeudInstSi() {} // A cause du destructeur virtuel de la classe Noeud
-    int executer();  // Exécute l'instruction si : si condition vraie on exécute la séquence
+    int executer();  // Exécute l'instruction si : si condition vraie on exécute la séquence avec sinonsi et sinon
 
   private:
     Noeud*  m_condition;
-    Noeud*  m_sequence;
+    Noeud*  m_seqIf;
+    std::vector<std::pair<Noeud*,Noeud*>>* m_vpElseIf;
+    Noeud* m_seqElse;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,9 +156,10 @@ class NoeudInstLire : public Noeud {
      // Construit une "instruction lire" avec sa variable a lire
    ~NoeudInstLire() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction lire : demande a l'utilisateur la valeur de la variable;
+    void ajoute(Noeud* expression);  // Ajoute une variable
 
   private:
-    Noeud*  m_var;
+    std::vector<Noeud*>  m_var;
 };
 
 #endif /* ARBREABSTRAIT_H */

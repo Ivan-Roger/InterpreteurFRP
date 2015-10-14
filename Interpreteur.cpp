@@ -148,9 +148,25 @@ Noeud* Interpreteur::instSi() {
     testerEtAvancer("(");
     Noeud* condition = expression(); // On mémorise la condition
     testerEtAvancer(")");
-    Noeud* sequence = seqInst(); // On mémorise la séquence d'instruction
+    Noeud* seqIf = seqInst(); // On mémorise la séquence d'instruction
+    vector<pair<Noeud*,Noeud*>>* vpElseIf = nullptr;
+    while (m_lecteur.getSymbole()=="sinonsi") {
+        vpElseIf = new vector<pair<Noeud*,Noeud*>>();
+        pair<Noeud*,Noeud*> p;
+        m_lecteur.avancer();
+        testerEtAvancer("(");
+        p.first = expression(); // On mémorise la condition
+        testerEtAvancer(")");
+        p.second = seqInst(); // On mémorise la séquence d'instruction
+        vpElseIf->push_back(p);
+    }
+    Noeud* seqElse = nullptr;
+    if (m_lecteur.getSymbole()=="sinon") {
+        m_lecteur.avancer();
+        seqElse = seqInst(); // On mémorise la séquence d'instruction
+    }
     testerEtAvancer("finsi");
-    return new NoeudInstSi(condition, sequence); // Et on renvoie un noeud Instruction Si
+    return new NoeudInstSi(condition, seqIf, vpElseIf, seqElse); // Et on renvoie un noeud Instruction Si
 }
 
 Noeud* Interpreteur::instTantQue() {
@@ -207,7 +223,7 @@ Noeud* Interpreteur::instEcrire() {
     int i=0;
     do {
         m_lecteur.avancer();
-        if (m_lecteur.getSymbole() == "<VARIABLE>") {
+        if (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "<ENTIER>") {
             res->ajoute(expression());
         } else if (m_lecteur.getSymbole() == "<CHAINE>") {
             res->ajoute(m_table.chercheAjoute(m_lecteur.getSymbole()));
@@ -228,9 +244,14 @@ Noeud* Interpreteur::instLire() {
     //    <instLire> ::= lire ( <variable> { , <variable> } )
     testerEtAvancer("lire");
     testerEtAvancer("(");
-    tester("<VARIABLE>");
+    testerEtAvancer("<VARIABLE>");
     Noeud* res = new NoeudInstLire(m_table.chercheAjoute(m_lecteur.getSymbole()));
-    m_lecteur.avancer();
+    while (m_lecteur.getSymbole()==",") {
+        m_lecteur.avancer();
+        tester("<VARIABLE>");
+        res->ajoute(m_table.chercheAjoute(m_lecteur.getSymbole()));
+        m_lecteur.avancer();
+    }
     testerEtAvancer(")");
     testerEtAvancer(";");
     return res;

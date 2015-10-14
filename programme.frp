@@ -2,8 +2,8 @@
 # Les lignes de commentaires commencent par #
 procedure principale()
   a = 5;
-  ecrire("Saisir a : ");
-  lire(a);
+  ecrire("Saisir a et b : ");
+  lire(a,b);
   i = 12+3;
   tantque (i>7)
     i=i-1;
@@ -11,13 +11,17 @@ procedure principale()
   repeter
     i=i+1;
   jusqua (i>9)
-  si (i>5)
+  si (i>10)
     j=1;
+  sinonsi (i>7)
+    j=2;
+  sinon
+    j=9;
   finsi
   pour (x=0;x<10;x=x+1)
     y = x*2;
     ecrire("\ty=",y,"\n");
   finpour
-  ecrire("Bonjour, ",a);
+  ecrire("Bonjour, ",5,a);
 finproc
 # Commentaire Final

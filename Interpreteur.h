@@ -32,7 +32,7 @@ private:
     Noeud*  affectation();      // <affectation> ::= <variable> = <expression> 
     Noeud*  expression();       //  <expression> ::= <facteur> { <opBinaire> <facteur> }
     Noeud*  facteur();          //     <facteur> ::= <entier>  |  <variable>  |  - <facteur>  | non <facteur> | ( <expression> )
-    //Noeud*  opBinaire();        //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
+    //Noeud*  opBinaire();      //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
     Noeud*  instSi();           //      <instSi> ::= si ( <expression> ) <seqInst> finsi
     Noeud*  instTantQue();      // <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque
     Noeud*  instRepeter();      // <instRepeter> ::= repeter <seqInst> jusqua( <expression> )
