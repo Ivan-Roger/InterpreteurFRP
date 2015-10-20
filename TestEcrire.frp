@@ -1,0 +1,9 @@
+# Fichier de test de Ecrire
+procedure principale()
+  i=8;
+  ecrire("Bonjour, vous avez ",i," ans.\n");
+  ecrire("\tBonne journée !");
+  # resultat attendu :
+  # |Bonjour, vous avez 8 ans.
+  # |   Bonne journée !
+finproc

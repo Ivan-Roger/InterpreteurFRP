@@ -1,0 +1,7 @@
+# Fichier de test de Lire
+procedure principale()
+  i=0;
+  j=5;
+  lire(i,j);
+  # resultat attendu : i et j avec les valeurs lues
+finproc

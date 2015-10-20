@@ -1,0 +1,8 @@
+# Fichier de test de TantQue
+procedure principale()
+  i=0;
+  tantque (i<9)
+    i=i+1;
+  fintantque
+  # resultat attendu i=9;
+finproc

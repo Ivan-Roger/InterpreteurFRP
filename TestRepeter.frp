@@ -1,0 +1,8 @@
+# Fichier de test de Repeter
+procedure principale()
+  i=0;
+  repeter
+    i=i+1;
+  tanque (i<5)
+  # resultat attendu i=5;
+finproc
