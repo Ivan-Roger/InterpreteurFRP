@@ -18,6 +18,7 @@ class Noeud {
 // Remarque : la classe ne contient aucun constructeur
   public:
     virtual int  executer() =0 ; // Méthode pure (non implémentée) qui rend la classe abstraite
+    virtual void translate(std::ostream& out, int offset)=0; // Traduction en langage compilable
     virtual void ajoute(Noeud* instruction) { throw OperationInterditeException(); }
     virtual ~Noeud() {} // Présence d'un destructeur virtuel conseillée dans les classes abstraites
 };
@@ -30,6 +31,7 @@ class NoeudSeqInst : public Noeud {
      NoeudSeqInst();   // Construit une séquence d'instruction vide
     ~NoeudSeqInst() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();    // Exécute chaque instruction de la séquence
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
     void ajoute(Noeud* instruction);  // Ajoute une instruction à la séquence
 
   private:
@@ -44,6 +46,7 @@ class NoeudAffectation : public Noeud {
      NoeudAffectation(Noeud* variable, Noeud* expression); // construit une affectation
     ~NoeudAffectation() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();        // Exécute (évalue) l'expression et affecte sa valeur à la variable
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
 
   private:
     Noeud* m_variable;
@@ -59,6 +62,7 @@ class NoeudOperateurBinaire : public Noeud {
     // Construit une opération binaire : operandeGauche operateur OperandeDroit
    ~NoeudOperateurBinaire() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();            // Exécute (évalue) l'opération binaire)
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
 
   private:
     Symbole m_operateur;
@@ -76,6 +80,7 @@ class NoeudInstSi : public Noeud {
      // ansi que l'eventuel condition et sequence d'instruction du sinon
    ~NoeudInstSi() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction si : si condition vraie on exécute la séquence avec sinonsi et sinon
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
 
   private:
     Noeud*  m_condition;
@@ -93,6 +98,7 @@ class NoeudInstTantQue : public Noeud {
      // Construit une "instruction tantque" avec sa condition et sa séquence d'instruction
    ~NoeudInstTantQue() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction tantque : execute les insruction tant que la condition est verifiée
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
 
   private:
     Noeud*  m_condition;
@@ -109,6 +115,7 @@ class NoeudInstRepeter : public Noeud {
    ~NoeudInstRepeter() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction repeter : repete les instruction (au moins une fois)
                     // jusqu'a que la condition ne soit plus verifiée
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
 
   private:
     Noeud*  m_condition;
@@ -124,6 +131,7 @@ class NoeudInstPour : public Noeud {
      // Construit une "instruction pour" avec sa condition et sa séquence d'instruction et ses eventuels initialisation et incrementation
    ~NoeudInstPour() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction pour : boucle avec variable auto incrémenté
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
 
   private:
     Noeud*  m_init;
@@ -142,6 +150,7 @@ class NoeudInstEcrire : public Noeud {
    ~NoeudInstEcrire() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction ecrire : affiche les resultat des expressions et les chaines
     void ajoute(Noeud* expression);  // Ajoute une expression
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
     
   private:
     std::vector<Noeud*>  m_expressions;
@@ -157,6 +166,7 @@ class NoeudInstLire : public Noeud {
    ~NoeudInstLire() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction lire : demande a l'utilisateur la valeur de la variable;
     void ajoute(Noeud* expression);  // Ajoute une variable
+    void translate(std::ostream& out, int offset=0); // Traduction en langage compilable
 
   private:
     std::vector<Noeud*>  m_var;

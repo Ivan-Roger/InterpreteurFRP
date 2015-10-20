@@ -30,6 +30,19 @@ void NoeudSeqInst::ajoute(Noeud* instruction) {
     if (instruction != nullptr) m_instructions.push_back(instruction);
 }
 
+void NoeudSeqInst::translate(std::ostream& out, int offset) {
+    string prefix;
+    for(int i=0;i<offset;i++)
+        prefix.append("\t");
+    for (int i=0; i<m_instructions.size(); i++) {
+        Noeud* r = m_instructions[i];
+        out << prefix;
+        r->translate(out,offset);
+        out << ";";
+        out << endl;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudAffectation
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +55,12 @@ int NoeudAffectation::executer() {
     int valeur = m_expression->executer(); // On exécute (évalue) l'expression
     ((SymboleValue*) m_variable)->setValeur(valeur); // On affecte la variable
     return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudAffectation::translate(std::ostream& out, int offset) {
+    out << ((SymboleValue*)m_variable)->getChaine() << " = (";
+    m_expression->translate(out,offset);
+    out << ")";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +93,19 @@ int NoeudOperateurBinaire::executer() {
         valeur = og / od;
     }
     return valeur; // On retourne la valeur calculée
+}
+
+void NoeudOperateurBinaire::translate(std::ostream& out, int offset) {
+    string op;
+    if (m_operateur.getChaine() == "et") op = "&&";
+    else if (m_operateur.getChaine() == "ou") op = "||";
+    else if (m_operateur.getChaine() == "non") op = "!";
+    else op = m_operateur.getChaine();
+    if (m_operandeGauche!=nullptr)
+        out << ((SymboleValue*)m_operandeGauche)->getChaine();
+    out << op;
+    if (m_operandeDroit!=nullptr)
+        out << ((SymboleValue*)m_operandeDroit)->getChaine();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,6 +141,32 @@ int NoeudInstSi::executer() {
     return 0; // La valeur renvoyée ne représente rien !
 }
 
+void NoeudInstSi::translate(std::ostream& out, int offset) {
+    string prefix;
+    for(int i=0;i<offset;i++)
+        prefix.append("\t");
+    out << "if (";
+    m_condition->translate(out,offset);
+    out << ") {" << endl;
+    m_seqIf->translate(out,offset+1);
+    out << prefix << "}";
+    if (m_vpElseIf != nullptr) {
+        for (int i=0; i<m_vpElseIf->size(); i++) {
+            out << " else if (";
+            (*m_vpElseIf)[i].first->translate(out,offset+1);
+            out << ") {" << endl;
+            (*m_vpElseIf)[i].second->translate(out,offset+1);
+            out << prefix << "}";
+        }
+    }
+    if (m_seqElse!=nullptr) {
+        out << " else {" << endl;
+        m_seqElse->translate(out,offset+1);
+        out << prefix << "}";
+    }
+    out << "//";
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudInstTantQue
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,6 +180,18 @@ int NoeudInstTantQue::executer() {
         m_sequence->executer();
     }
     return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstTantQue::translate(std::ostream& out, int offset) {
+    string prefix;
+    for(int i=0;i<offset;i++)
+        prefix.append("\t");
+    out << "while (";
+    m_condition->translate(out,offset);
+    out << ") {" << endl;
+    m_sequence->translate(out,offset+1);
+    out << prefix << "}";
+    out << "//";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +209,17 @@ int NoeudInstRepeter::executer() {
     return 0; // La valeur renvoyée ne représente rien !
 }
 
+void NoeudInstRepeter::translate(std::ostream& out, int offset) {
+    string prefix;
+    for(int i=0;i<offset;i++)
+        prefix.append("\t");
+    out << "do {" << endl;
+    m_sequence->translate(out,offset+1);
+    out << prefix << "} while (";
+    m_condition->translate(out,offset);
+    out << ")";
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudInstPour
 ////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +235,24 @@ int NoeudInstPour::executer() {
         if (m_inc != nullptr) m_inc->executer();
     }
     return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstPour::translate(std::ostream& out, int offset) {
+    string prefix;
+    for(int i=0;i<offset;i++)
+        prefix.append("\t");
+    out << "for (";
+    if (m_init!=nullptr)
+        m_init->translate(out,offset);
+    out << "; ";
+    m_condition->translate(out,offset);
+    out << "; ";
+    if (m_inc!=nullptr)
+        m_inc->translate(out,offset);
+    out << ") {" << endl;
+    m_sequence->translate(out, offset+1);
+    out << prefix << "}";
+    out << "//";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -186,6 +285,32 @@ void NoeudInstEcrire::ajoute(Noeud* expression) {
     m_expressions.push_back(expression);
 }
 
+void NoeudInstEcrire::translate(std::ostream& out, int offset) {
+    out << "printf(\"";
+    vector<Noeud*> disp;
+    for (int i = 0; i < m_expressions.size(); i++) {
+        Noeud* p = m_expressions[i];
+        if (typeid (*p) == typeid (SymboleValue)) {
+            SymboleValue* r = ((SymboleValue*) p);
+            if (*r == "<CHAINE>") {
+                out << r->getChaine().substr(1, r->getChaine().size() - 2);
+            } else {
+                out << "%d";
+                disp.push_back(r);
+            }
+        } else {
+            out << "%s";
+            disp.push_back(p);
+        }
+    }
+    out << "\"";
+    for (int i=0; i<disp.size(); i++) {
+        out << ", ";
+        disp[i]->translate(out,offset);
+    }
+    out << ")";
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudInstLire
 ////////////////////////////////////////////////////////////////////////////////
@@ -205,4 +330,16 @@ int NoeudInstLire::executer() {
 
 void NoeudInstLire::ajoute(Noeud* var) {
     m_var.push_back(var);
+}
+
+void NoeudInstLire::translate(std::ostream& out, int offset) {
+    out << "scanf(\"";
+    for (int i=0; i<m_var.size(); i++) {
+        out << "%d";
+    }
+    out << "\"";
+    for (int i=0; i<m_var.size(); i++) {
+        out << ", " << ((SymboleValue*)m_var[i])->getChaine();
+    }
+    out << ")";
 }

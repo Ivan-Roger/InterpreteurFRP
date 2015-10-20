@@ -25,3 +25,10 @@ ostream & operator<<(ostream & cout, const SymboleValue & symbole) {
   else cout << "indefinie ";
   return cout;
 }
+
+void SymboleValue::translate(std::ostream& out, int offset) {
+    if (*this == "<ENTIER>")
+        out << m_valeur;
+    if (*this == "<CHAINE>" || *this == "<VARIABLE>")
+        out << this->getChaine();
+}

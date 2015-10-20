@@ -15,7 +15,7 @@ using namespace std;
 class InterpreteurException : public exception {
 public:
     const char * what() const throw() {
-        return "Exception Interpreteur";
+        return "Syntaxe incorrecte !";
     }
 };
 
