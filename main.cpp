@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     cout << endl << "Table : " << TABLE << endl << "Code : " << CODE << endl << "Exec : " << EXEC << endl;
   }
   ifstream fichier(nomFich.c_str());
-  ofstream code("out.c.txt");
+  ofstream code("out.c");
   try {
     Interpreteur interpreteur(fichier);
     cout << endl << "================ Analyse Syntaxe" << endl;
