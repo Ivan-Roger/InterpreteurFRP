@@ -16,7 +16,7 @@ public:
 	friend ostream & operator <<(ostream & cout, const Symbole & symbole); // Fonction amie pour pouvoir afficher un symbole sur cout 
 
 private:
-    	enum m_categorie { MOTCLE, VARIABLE, ENTIER, CHAINE, INDEFINI, FINDEFICHIER };
+    	enum m_categorie { PROCEDURE, MOTCLE, VARIABLE, ENTIER, CHAINE, INDEFINI, FINDEFICHIER };
 	string           m_chaine;             // Chaîne du symbole
 	m_categorie      m_categorie;          // Categorie du symbole (voir type énuméré ci-dessus)
 	bool             isMotCle(const string & s) const;  // Renvoie vrai si s est un mot clé du langage

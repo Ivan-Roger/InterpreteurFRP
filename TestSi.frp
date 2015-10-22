@@ -1,9 +1,6 @@
 # Fichier de test du Si
 procedure principale()
   test = 5;
-  test1 = 0;
-  test2 = 0;
-  test3 = 0;
 
   # test si
   si (test>2)
@@ -21,7 +18,7 @@ procedure principale()
 
   # test sinon
   si (test<1)
-    test = 10
+    test = 10;
   sinon
     test3 = 3;
   finsi

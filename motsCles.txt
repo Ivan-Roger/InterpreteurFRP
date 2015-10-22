@@ -1,8 +1,13 @@
 procedure
 principale
 finproc
+appel
 pour
 finpour
+selon
+cas
+defaut
+:
 si
 sinon
 sinonsi

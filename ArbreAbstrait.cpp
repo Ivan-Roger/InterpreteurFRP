@@ -88,7 +88,23 @@ int NoeudOperateurBinaire::executer() {
     else if (this->m_operateur == "et") valeur = (og && od);
     else if (this->m_operateur == "ou") valeur = (og || od);
     else if (this->m_operateur == "non") valeur = (!og);
-    else if (this->m_operateur == "/") {
+    else if (this->m_operateur == "++") {
+        if (m_operandeGauche != nullptr) {
+            valeur = og;
+            ((SymboleValue*)m_operandeGauche)->setValeur(og+1);
+        } else if (m_operandeDroit != nullptr) {
+            ((SymboleValue*)m_operandeGauche)->setValeur(og+1);
+            valeur = og;
+        }
+    } else if (this->m_operateur == "--") {
+        if (m_operandeGauche != nullptr) {
+            valeur = og;
+            ((SymboleValue*)m_operandeGauche)->setValeur(og-1);
+        } else if (m_operandeDroit != nullptr) {
+            ((SymboleValue*)m_operandeGauche)->setValeur(og-1);
+            valeur = og;
+        }
+    } else if (this->m_operateur == "/") {
         if (od == 0) throw DivParZeroException();
         valeur = og / od;
     }

@@ -28,24 +28,29 @@ private:
     bool           m_erreur;
 
     // Implémentation de la grammaire
-    Noeud*  programme();        //   <programme> ::= procedure principale() <seqInst> finproc FIN_FICHIER
+    Noeud*  programme();        //   <programme> ::= { procedure <procedure>( { <variable> } ) <seqInst> finproc } procedure principale() <seqInst> finproc FIN_FICHIER
     Noeud*  seqInst();          //     <seqInst> ::= <inst> { <inst> }
     Noeud*  inst();	        //        <inst> ::= <affectation> ; | <instSi>
-    Noeud*  affectation();      // <affectation> ::= <variable> = <expression> 
-    Noeud*  expression();       //  <expression> ::= <facteur> { <opBinaire> <facteur> }
-    Noeud*  facteur();          //     <facteur> ::= <entier>  |  <variable>  |  - <facteur>  | non <facteur> | ( <expression> )
-    //Noeud*  opBinaire();      //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
+    Noeud*  affectation();      // <affectation> ::= [ <variable> [ = <expression> | ++ | -- ] ] | [ [ ++ | -- ] <variable> ]
+    Noeud*  expression();       //  <expression> ::= <terme> { + <terme> | - <terme>}
+    Noeud*  terme();            //       <terme> ::= <facteur> { * <facteur> | / <facteur> }
+    Noeud*  facteur();          //     <facteur> ::= <entier> | <variable> | - <expBool> | non <expBool> | ( <expBool> )
+    Noeud*  expBool();          //     <expBool> ::= <relationEt> { ou <relationEt> }
+    Noeud*  relationEt();       //  <realtionEt> ::= <realtion> { et <relation> }
+    Noeud*  relation();         //    <relation> ::= <expression> { <opRel> <expression> }
+    //Noeud*  opRel();          //       <opRel> ::= == | != | < | <= | > | >=
     Noeud*  instSi();           //      <instSi> ::= si ( <expression> ) <seqInst> finsi
     Noeud*  instTantQue();      // <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque
     Noeud*  instRepeter();      // <instRepeter> ::= repeter <seqInst> jusqua( <expression> )
     Noeud*  instPour();         //    <instPour> ::= pour ( [ <affectation> ] ; <expression> ; [ <affectation> ] ) <seqInst> finpour
     Noeud*  instEcrire();       //  <instEcrire> ::= ecrire ( <expression> | <chaine> {, <expression> | <chaine> } )
     Noeud*  instLire();         //    <instLire> ::= lire ( <variable> { , <variable> } )
+    //Noeud*  instSelon();      //   <instSelon> ::= selon ( <variable> ) { cas <entier> : <seqInst> } [ defaut : <seqInst> ] finselon
     
     // outils pour simplifier l'analyse syntaxique
-    void tester (const string & symboleAttendu) const throw (SyntaxeException);   // Si symbole courant != symboleAttendu, on lève une exception
-    void testerEtAvancer(const string & symboleAttendu) throw (SyntaxeException); // Si symbole courant != symboleAttendu, on lève une exception, sinon on avance
-    void erreur (const string & mess) const throw (SyntaxeException);             // Lève une exception "contenant" le message mess
+    void tester (const std::string & symboleAttendu) const throw (SyntaxeException);   // Si symbole courant != symboleAttendu, on lève une exception
+    void testerEtAvancer(const std::string & symboleAttendu) throw (SyntaxeException); // Si symbole courant != symboleAttendu, on lève une exception, sinon on avance
+    void erreur (const std::string & mess) const throw (SyntaxeException);             // Lève une exception "contenant" le message mess
 };
 
 #endif /* INTERPRETEUR_H */

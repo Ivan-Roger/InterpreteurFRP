@@ -1,8 +1,8 @@
 # Fichier de test de Pour
 procedure principale()
   j=0;
-  pour (i=0;i<5;i=i+1)
-    j=j+1;
+  pour (i=0;i<5;i++)
+    j++;
   finpour
   # resultat attendu j=5;
 finproc

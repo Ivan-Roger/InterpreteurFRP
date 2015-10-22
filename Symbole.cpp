@@ -21,6 +21,7 @@ Symbole::Symbole(const string & s) : m_chaine(s) {
 bool Symbole::operator==(const string & ch) const {
   return this->m_chaine == ch ||
           (this->m_categorie == VARIABLE && (ch == "<VARIABLE>" || ch == "<variable>")) ||
+          (this->m_categorie == PROCEDURE && (ch == "<PROCEDURE>" || ch == "<procedure>")) ||
           (this->m_categorie == ENTIER && (ch == "<ENTIER>" || ch == "<entier>")) ||
           (this->m_categorie == CHAINE && (ch == "<CHAINE>" || ch == "<chaine>")) ||
           (this->m_categorie == INDEFINI && (ch == "<INDEFINI>" || ch == "<indefini>")) ||
