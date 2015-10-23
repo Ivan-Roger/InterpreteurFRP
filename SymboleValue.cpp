@@ -1,5 +1,4 @@
 #include "SymboleValue.h"
-#include "Exceptions.h"
 #include <stdlib.h>
 
 SymboleValue::SymboleValue(const Symbole & s) :

@@ -66,26 +66,6 @@ void Interpreteur::erreur(const string & message) const throw (SyntaxeException)
     throw SyntaxeException(messageWhat);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-Noeud* Interpreteur::programme() {
-    // <programme> ::= procedure principale() <seqInst> finproc FIN_FICHIER
-    Noeud* prog = nullptr;
-    testerEtAvancer("procedure");
-    while (m_lecteur.getSymbole() != "principale") {
-        m_table.chercheAjoute("")
-
-        testerEtAvancer("procedure");
-    }
-    testerEtAvancer("principale");
-    testerEtAvancer("(");
-    testerEtAvancer(")");
-    Noeud* sequence = seqInst();
-    testerEtAvancer("finproc");
-    tester("<FINDEFICHIER>");
-    return prog;
-}
-
 Noeud* Interpreteur::seqInst() {
     // <seqInst> ::= <inst> { <inst> }
     NoeudSeqInst* sequence = new NoeudSeqInst();

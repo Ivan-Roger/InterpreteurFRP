@@ -1,9 +1,4 @@
-#include <stdlib.h>
-#include <typeinfo>
 #include "ArbreAbstrait.h"
-#include "Symbole.h"
-#include "SymboleValue.h"
-#include "Exceptions.h"
 
 bool replace(std::string& str, const std::string& from, const std::string& to) {
     size_t start_pos = str.find(from);
@@ -312,7 +307,7 @@ void NoeudInstEcrire::translate(std::ostream& out, int offset) {
                 out << r->getChaine().substr(1, r->getChaine().size() - 2);
             } else {
                 out << "%d";
-                disp.push_back(r);
+                disp.push_back(((Noeud*)r));
             }
         } else {
             out << "%s";

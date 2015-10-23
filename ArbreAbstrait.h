@@ -1,3 +1,5 @@
+class Noeud;
+
 #ifndef ARBREABSTRAIT_H
 #define ARBREABSTRAIT_H
 
@@ -7,11 +9,13 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-using namespace std;
-
+#include <stdlib.h>
+#include <typeinfo>
 #include "Symbole.h"
+#include "SymboleValue.h"
 #include "Exceptions.h"
-#include "TableSymboles.h"
+
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -26,44 +30,7 @@ public:
         throw OperationInterditeException();
     }
 
-    virtual ~Noeud() {
-    } // Présence d'un destructeur virtuel conseillée dans les classes abstraites
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-class NoeudProgramme : public Noeud {
-    // Classe pour représenter un noeud "programme"
-    //  qui a autant de fils que de procedures dans le programme
-public:
-    NoeudProgramme(Noeud* procPrincipale); // Construit un programme a partir de la procedure principale
-
-    ~NoeudProgramme() {} // A cause du destructeur virtuel de la classe Noeud
-    int executer(); // Exécute chaque instruction de la séquence
-    void translate(std::ostream& out, int offset = 0); // Traduction en langage compilable
-    void ajoute(Noeud* procedure); // Ajoute une instruction à la séquence
-
-private:
-    Noeud* m_procPrincipale;
-    vector<Noeud*> m_procedures; // pour stocker les procedures
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-class NoeudProcedure : public Noeud {
-    // Classe pour représenter un noeud "sequence d'instruction"
-    //  qui a autant de fils que d'instructions dans la séquence
-public:
-    NoeudProcedure(Noeud* seqInst); // Construit une séquence d'instruction vide
-
-    ~NoeudProcedure() {} // A cause du destructeur virtuel de la classe Noeud
-    int executer(); // Exécute chaque instruction de la séquence
-    void translate(std::ostream& out, int offset = 0); // Traduction en langage compilable
-    //inline const TableSymboles & getTable () const  { return m_table;    } // Variables locales
-    
-private:
-    Noeud* m_sequence; // pour stocker la séquence
-    //TableSymboles m_table;
+    virtual ~Noeud() {} // Présence d'un destructeur virtuel conseillée dans les classes abstraites
 };
 
 ////////////////////////////////////////////////////////////////////////////////

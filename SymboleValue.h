@@ -1,15 +1,18 @@
+class SymboleValue;
+
 #ifndef SYMBOLEVALUE_H
 #define SYMBOLEVALUE_H
 
 #include <string.h>
 #include <iostream>
-using namespace std;
-
 #include "Symbole.h"
 #include "ArbreAbstrait.h"
 
-class SymboleValue : public Symbole,  // Un symbole valué est un symbole qui a une valeur (définie ou pas)
-                     public Noeud  {  //  et c'est aussi une feuille de l'arbre abstrait
+using namespace std;
+
+class SymboleValue : public Noeud, public Symbole {  
+    // Un symbole valué est un symbole qui a une valeur (définie ou pas)
+    //  et c'est aussi une feuille de l'arbre abstrait
 public:
     SymboleValue(const Symbole & s); // Construit un symbole valué à partir d'un symbole existant s
     ~SymboleValue( ) {}
